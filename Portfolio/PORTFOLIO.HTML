@@ -1,0 +1,566 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Portfolio</title>
+        
+        <!-- Load Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <style>
+            /* --- Modern Clean Theme Styling --- */
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'bg-dark': '#1a2035', /* Deep Blue Background (from video) */
+                            'primary-blue': '#00a6ff', /* Light Blue Accent (from video) */
+                            'text-light': '#ffffff', /* Crisp White White Text */
+                            'text-muted': '#b0c4d9', /* Muted text for paragraphs */
+                        },
+                        fontFamily: {
+                            sans: ['Roboto', 'Inter', 'sans-serif'], /* Clean, readable font */
+                            mono: ['Roboto Mono', 'monospace'],
+                        }
+                    }
+                }
+            }
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+            html { scroll-behavior: smooth; }
+            body {
+                background-color: #1a2035; 
+                color: #ffffff;
+                font-family: 'Roboto', sans-serif;
+                overflow-x: hidden;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* Hero Image Hexagon Clip Path (matching the video's design) */
+            .hexagon-clip {
+                clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+                border: 5px solid #00a6ff;
+                box-shadow: 0 0 20px rgba(0, 166, 255, 0.5);
+                transition: transform 0.3s ease;
+            }
+            .hexagon-clip:hover {
+                transform: scale(1.03);
+                box-shadow: 0 0 30px rgba(0, 166, 255, 0.7);
+            }
+            
+            /* Progress Bar Styling */
+            .progress-bar-container {
+                height: 8px;
+                background-color: #3b4257; /* Darker bar background */
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            .progress-bar {
+                background-color: #00a6ff;
+                height: 100%;
+                transition: width 1s ease-out;
+            }
+
+            /* --- Timeline Star Icon Styling (Updated) --- */
+            .timeline-dot {
+                position: absolute;
+                left: -6px; /* Offset to center the 24px wide star on the 0.5px wide line */
+                top: -2px; /* Small adjustment for visual vertical centering */
+                z-index: 10;
+                width: 24px; /* Star size */
+                height: 24px;
+            }
+            
+            /* Desktop adjustment: centers the 24px dot on the 1/2 mark */
+            .md\:left-1\/2 {
+                left: calc(50% - 12px); /* Calculate 50% minus half the star's width (12px) */
+            }
+
+            .timeline-dot svg {
+                fill: #00a6ff; /* Primary Blue fill for the star */
+                filter: drop-shadow(0 0 5px rgba(0, 166, 255, 0.7)); /* Glowing effect */
+            }
+            
+            /* Mobile menu specific styles */
+            .hidden-mobile { display: none; }
+            @media (min-width: 768px) {
+                .hidden-mobile { display: flex; }
+                #mobile-menu-btn { display: none; }
+            }
+
+            /* --- Scroll Reveal Styles (Initial Load & Scroll) --- */
+            .hidden-content {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+                /* Added different delay for staggered effect */
+                transition-delay: var(--delay, 0s); 
+            }
+
+            .hidden-content.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Project Card Animation */
+            .project-card:hover .project-overlay {
+                opacity: 1;
+            }
+            .project-card:hover .card-image {
+                filter: blur(2px) brightness(0.7);
+            }
+
+        </style>
+    </head>
+    <body class="bg-bg-dark text-text-light antialiased">
+
+        <!-- Header & Navigation -->
+        <header class="sticky top-0 z-50 w-full bg-bg-dark/90 backdrop-blur-sm border-b border-primary-blue/30 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 hidden-content" style="--delay: 0.8s;">
+                <div class="flex justify-between items-center h-16">
+                    <a href="#" class="text-3xl font-extrabold text-primary-blue tracking-wider">[KJ] KENT JAMES BULAC</a>
+                    <nav class="hidden-mobile space-x-8">
+                        <!-- Added subtle scale effect to nav links -->
+                        <a href="#hero" class="text-text-muted hover:text-primary-blue transition duration-150 transform hover:scale-110 font-semibold">Home</a>
+                        <a href="#education" class="text-text-muted hover:text-primary-blue transition duration-150 transform hover:scale-110 font-semibold">Education</a>
+                        <a href="#skills" class="text-text-muted hover:text-primary-blue transition duration-150 transform hover:scale-110 font-semibold">Skills</a>
+                        <a href="#projects" class="text-text-muted hover:text-primary-blue transition duration-150 transform hover:scale-110 font-semibold">Projects</a>
+                        <a href="#contact" class="text-text-muted hover:text-primary-blue transition duration-150 transform hover:scale-110 font-semibold">Contact Me</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <main class="w-full">
+            
+            <!-- Hero Section (Initial Load Reveal Applied) -->
+            <section id="hero" class="relative py-20 md:py-32 flex items-center min-h-[70vh] overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <!-- Left Column: Text (All elements now have the hidden-content class with staggered delays) -->
+                        <div class="md:text-left text-center">
+                            <p class="text-3xl text-text-light mb-4 font-bold hidden-content" style="--delay: 0.1s;">Hi!</p>
+                            <h1 class="text-5xl md:text-6xl font-extrabold text-text-light mb-4 leading-tight hidden-content" style="--delay: 0.2s;">
+                                I'm <span class="text-primary-blue">James Bulac</span>
+                            </h1>
+                            <!-- Job Title animation script handles its own content -->
+                            <h2 id="job-title" class="text-3xl font-bold text-primary-blue mb-6 min-h-10 hidden-content" style="--delay: 0.3s;">A Virtual Assistant</h2>
+                            
+                            <p class="text-lg text-text-muted mb-8 max-w-md md:max-w-none mx-auto hidden-content" style="--delay: 0.4s;">
+                                I'm motivated by a profound passion for technology and a strong willingness to learn.
+                            </p>
+                            
+                            <div class="space-y-2 text-sm mb-10 text-text-muted hidden-content" style="--delay: 0.5s;">
+                                <p>📍 Lusimba St., Cebu City (Philippines)</p>
+                                <p>📞 (+63) 912 3456 789</p>
+                                <p>📧 kentjamesbulac@gmail.com</p>
+                                <p class="mt-4 text-xs italic">I created this web portfolio using ReactJS.</p>
+                            </div>
+
+                            <!-- Added pop/press effect to button -->
+                            <a href="#" class="inline-block px-8 py-3 font-bold rounded-lg uppercase tracking-wider bg-primary-blue/80 text-bg-dark border border-primary-blue transition duration-300 transform hover:scale-[1.02] active:scale-[0.98] hover:bg-primary-blue hidden-content" style="--delay: 0.6s;">
+                                Download Resume
+                            </a>
+                        </div>
+
+                        <!-- Right Column: Image Placeholder with Hexagon Clip -->
+                        <div class="flex justify-center md:justify-end hidden-content" style="--delay: 0.7s;">
+                            <!-- Hexagon Container -->
+                            <div class="w-72 h-96 bg-primary-blue/30 hexagon-clip shadow-2xl">
+                                <!-- Placeholder for the actual image content -->
+                                <div class="w-full h-full flex items-center justify-center text-4xl text-text-light font-bold" style="background-color: #272c43;">
+                                    <img src="pfp.png" alt="pfp">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+            <!-- Education Section (Timeline Style) -->
+            <section id="education" class="py-16 md:py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <h2 class="text-4xl font-extrabold text-center text-text-light mb-12 hidden-content" style="--delay: 0s;">Educational Background</h2>
+                <p class="text-center text-text-muted mb-12 max-w-3xl mx-auto hidden-content" style="--delay: 0.2s;">
+                    My educational background shows my unwavering commitment to lifelong learning and personal development. It attests to my unwavering pursuit of information and skill development in order to achieve in my chosen field.
+                </p>
+
+                <!-- Vertical Timeline Container -->
+                <div class="relative pl-6 md:pl-0">
+                    <!-- Timeline Line -->
+                    <div class="absolute left-6 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-primary-blue/50 hidden-content" style="--delay: 0.3s;"></div>
+                    
+                    <!-- Timeline Items -->
+                    <div class="space-y-12">
+                        
+                        <!-- Item 1 (Right Side on Desktop) -->
+                        <div class="flex flex-col md:flex-row justify-end md:justify-start relative hidden-content" style="--delay: 0.4s;">
+                            <div class="md:w-1/2 p-4 md:order-2 md:pl-12">
+                                <h3 class="text-xl font-bold text-primary-blue">BASAK COMMUNITY SCHOOL ELEMENTAY SCHOOL</h3>
+                                <p class="text-text-light">ELEMENTARY GRADUATE</p>
+                                <p class="text-text-muted text-sm">S.Y. 2015 - 2016</p>
+                                <p class="text-text-muted text-sm mt-1">Cabreros St., Cebu City</p>
+                            </div>
+                            <!-- Star Icon Dot (Mobile: left: -6px; Desktop: centered at 50%) -->
+                            <div class="timeline-dot md:left-1/2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full">
+                                    <path d="M12 2l3.09 6.26l6.91 1l-5 4.88l1.18 6.88L12 17.27l-6.18 3.25l1.18-6.88l-5-4.88l6.91-1L12 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Item 2 (Left Side on Desktop) -->
+                        <div class="flex flex-col md:flex-row justify-start md:justify-end relative hidden-content" style="--delay: 0.6s;">
+                            <div class="md:w-1/2 p-4 md:pr-12 md:text-right md:order-1">
+                                <h3 class="text-xl font-bold text-primary-blue">DVRMNHS</h3>
+                                <p class="text-text-light">Junior High School Graduate</p>
+                                <p class="text-text-muted text-sm">S.Y. 2019 - 2020</p>
+                                <p class="text-text-muted text-sm mt-1">Macopa St., Cebu City</p>
+                            </div>
+                            <!-- Star Icon Dot (Mobile: left: -6px; Desktop: centered at 50%) -->
+                            <div class="timeline-dot md:left-1/2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full">
+                                    <path d="M12 2l3.09 6.26l6.91 1l-5 4.88l1.18 6.88L12 17.27l-6.18 3.25l1.18-6.88l-5-4.88l6.91-1L12 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Item 3 (Right Side on Desktop) -->
+                        <div class="flex flex-col md:flex-row justify-end md:justify-start relative hidden-content" style="--delay: 0.8s;">
+                            <div class="md:w-1/2 p-4 md:order-2 md:pl-12">
+                                <h3 class="text-xl font-bold text-primary-blue">DVRMNHS</h3>
+                                <p class="text-text-light">Senior High School Graduate</p>
+                                <p class="text-text-muted text-sm">S.Y. 2020 - 2021</p>
+                                <p class="text-text-muted text-sm mt-1">macopa St., Cebu City</p>
+                            </div>
+                            <!-- Star Icon Dot (Mobile: left: -6px; Desktop: centered at 50%) -->
+                            <div class="timeline-dot md:left-1/2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full">
+                                    <path d="M12 2l3.09 6.26l6.91 1l-5 4.88l1.18 6.88L12 17.27l-6.18 3.25l1.18-6.88l-5-4.88l6.91-1L12 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Skills Section ("What I Do") -->
+            <section id="skills" class="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <h2 class="text-4xl font-extrabold text-center text-text-light mb-12 hidden-content" style="--delay: 0s;">What I Do</h2>
+                <p class="text-center text-text-muted mb-12 max-w-3xl mx-auto hidden-content" style="--delay: 0.2s;">
+                    I'm a BSIT 3rd yr student and aspiring web developer with a strong desire to broaden my technological knowledge and a keen interest in crafting both visually appealing designs and seamless website functionality.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-12">
+                    
+                    <!-- Left Column: Programming/Library Skills (Progress Bars) -->
+                    <div class="hidden-content" style="--delay: 0.4s;">
+                        <h3 class="text-2xl font-bold text-primary-blue mb-6">Programming/Library Skills</h3>
+                        
+                        <!-- Skill Item 1 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">C++</span>
+                                <span class="font-mono">43%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 43%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Item 2 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">HTML</span>
+                                <span class="font-mono">88%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 88%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Item 3 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">CSS</span>
+                                <span class="font-mono">80%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Skill Item 4 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">JavaScript</span>
+                                <span class="font-mono">52%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 52%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Item 5 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">Java</span>
+                                <span class="font-mono">38%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 38%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Item 6 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">C</span>
+                                <span class="font-mono">58%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 58%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Item 7 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-1 text-sm">
+                                <span class="font-bold">Database</span>
+                                <span class="font-mono">63%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 63%;"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Other Skills/Summary -->
+                    <div class="space-y-8 hidden-content" style="--delay: 0.6s;">
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary-blue mb-4">Software Applications</h3>
+                            <p class="text-text-muted">My skills include **Microsoft 365** competency as well as good understanding of **Adobe Photoshop** and **Adobe Illustrator**, allowing me to efficiently use and navigate these software products for a variety of jobs and projects.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary-blue mb-4">Software Troubleshoot</h3>
+                            <p class="text-text-muted">I possess strong troubleshooting skills, specializing in diagnosing and resolving software-related difficulties, particularly on **Windows operating systems**.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary-blue mb-4">Hardware Troubleshoot</h3>
+                            <p class="text-text-muted">I possess expertise in **computer hardware troubleshooting**, allowing me to effectively detect and address hardware-related issues, assuring optimal system performance.</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary-blue mb-4">Networking</h3>
+                            <p class="text-text-muted">In terms of networking, I have a basic understanding of network components, IP addressing, subnetting, and basic network configuration, which enables me to perform simple networking tasks and troubleshoot basic network issues.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+            <!-- Projects Section (Updated to include Tic-Tac-Toe) -->
+            <section id="projects" class="py-16 md:py-24 w-full bg-[#1e253b]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-4xl font-extrabold text-center text-text-light mb-12 hidden-content" style="--delay: 0s;">My Projects</h2>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                                <a href="HTML/index.html" target="_self" class="bg-bg-dark rounded-xl overflow-hidden shadow-xl project-card hidden-content cursor-pointer block" style="--delay: 0.4s;">
+
+                        
+                        <!-- Existing Project 1: First Ever Project -->
+                        <div class="bg-bg-dark rounded-xl overflow-hidden shadow-xl project-card hidden-content" style="--delay: 0.2s;">
+                    
+                            <div class="relative group">
+                                <!-- Placeholder Image -->
+                                <img src="Screenshot 2025-10-20 204002.png" alt="First Ever Project" class="w-full h-56 object-cover card-image transition duration-500">
+                                <!-- Overlay Content -->
+                                <div class="project-overlay absolute inset-0 bg-primary-blue/80 flex items-center justify-center opacity-0 transition duration-500">
+                                    <span class="text-2xl font-bold text-bg-dark">CLICK TO VIEW (Mock)</span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-primary-blue mb-2">First Ever Project</h3>
+                                <p class="text-text-muted text-sm">This was my first project when I started learning HTML and CSS. It helped me understand the basics of web design and how to structure a simple website..</p>
+                            </div>
+                        </div>
+
+                        <!-- NEW PROJECT: Tic-Tac-Toe Game (External Link) -->
+                        <a href="tictactoe.html" target="_self" class="bg-bg-dark rounded-xl overflow-hidden shadow-xl project-card hidden-content cursor-pointer block" style="--delay: 0.4s;">
+                            <div class="relative group">
+                                <!-- Placeholder Image (Game Preview) -->
+                                <div class="w-full h-56 flex items-center justify-center card-image transition duration-500" style="background-color: #3b4257;">
+                                    <div class="text-center p-4">
+                                        <!-- Simple Game Icon -->
+                                        <svg class="w-12 h-12 mx-auto text-primary-blue mb-2" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19 3h-2V1h-2v2H7V1H5v2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H3V5h16v16zM5 7h4v4H5V7zm6 0h4v4h-4V7zm0 6h4v4h-4v-4zM5 13h4v4H5v-4z"/>
+                                        </svg>
+                                        <span class="text-text-light font-bold text-lg">Play Tic-Tac-Toe!</span>
+                                    </div>
+                                </div>
+                                <!-- Overlay Content -->
+                                <div class="project-overlay absolute inset-0 bg-primary-blue/80 flex items-center justify-center opacity-0 transition duration-500">
+                                    <span class="text-2xl font-bold text-bg-dark">Launch Game</span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-primary-blue mb-2">Classic Tic-Tac-Toe</h3>
+                                <p class="text-text-muted text-sm">A simple and responsive two-player game built purely with HTML, CSS, and vanilla JavaScript. Demonstrates foundational web development skills.</p>
+                            </div>
+                        </a>
+                        
+                        <!-- Example Empty Card for Future Projects -->
+                        <div class="bg-bg-dark rounded-xl overflow-hidden shadow-xl project-card hidden-content" style="--delay: 0.6s;">
+                  <a href="awe/index.html" target="_self" class="bg-bg-dark rounded-xl overflow-hidden shadow-xl project-card hidden-content cursor-pointer block" style="--delay: 0.4s;">
+
+                            <div class="relative group">
+                                <!-- Placeholder Image -->
+                                <img src="Screenshot 2025-10-20 202914.png" alt="Group Project Placeholder" class="w-full h-56 object-cover card-image transition duration-500">
+                                <!-- Overlay Content -->
+                                <div class="project-overlay absolute inset-0 bg-primary-blue/80 flex items-center justify-center opacity-0 transition duration-500">
+                                    <span class="text-2xl font-bold text-bg-dark">CLICK TO VIEW</span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-primary-blue mb-2">MINI PROJECT   </h3>
+                                <p class="text-text-muted text-sm">This mini project was built using HTML, CSS, and JavaScript. It showcases my ability to create interactive and visually appealing web pages while experimenting with simple animations and responsive layouts</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+
+            </section>
+
+
+            <!-- Contact Me Section -->
+            <section id="contact" class="py-16 md:py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <h2 class="text-4xl font-extrabold text-center text-text-light mb-12 hidden-content" style="--delay: 0s;">Contact Me</h2>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Left: Illustration/Contact Info -->
+                    <div class="text-center hidden-content" style="--delay: 0.2s;">
+                        <img src="pfp.png" alt="Contact Illustration" class="mx-auto max-w-full h-auto rounded-lg mb-6 shadow-xl border-2 border-primary-blue/30">
+                        <p class="text-text-muted">Please fill out the form below to initiate discussing about potential job opportunities.</p>
+                    </div>
+                    
+                    <!-- Right: Form -->
+                    <div class="bg-[#1e253b] p-8 rounded-xl shadow-2xl hidden-content" style="--delay: 0.4s;">
+                        <form onsubmit="event.preventDefault(); alert('Form submitted successfully (simulated)!');" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-text-light/80 mb-1">Your Name</label>
+                                <input type="text" id="name" name="name" required class="w-full p-3 rounded-lg bg-bg-dark border border-primary-blue/50 focus:border-primary-blue focus:ring-primary-blue text-text-light">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-text-light/80 mb-1">Your Email</label>
+                                <input type="email" id="email" name="email" required class="w-full p-3 rounded-lg bg-bg-dark border border-primary-blue/50 focus:border-primary-blue focus:ring-primary-blue text-text-light">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-text-light/80 mb-1">Your Message</label>
+                                <textarea id="message" name="message" rows="4" required class="w-full p-3 rounded-lg bg-bg-dark border border-primary-blue/50 focus:border-primary-blue focus:ring-primary-blue text-text-light"></textarea>
+                            </div>
+                            <button type="submit" class="w-full px-6 py-3 font-bold rounded-lg uppercase tracking-wider bg-primary-blue/80 text-bg-dark transition duration-300 transform hover:scale-[1.01] active:scale-[0.99] hover:bg-primary-blue">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+            </section>
+
+
+            <!-- Footer -->
+            <footer class="w-full py-8 border-t border-primary-blue/30 mt-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <p class="text-text-muted text-sm">&copy; 2025 Kent James Bulac.</p>
+                </div>
+            </footer>
+
+        </main>
+
+        <!-- JavaScript for Dynamic Effects -->
+        <script>
+            
+            // --- Job Title Typing Effect ---
+            const titles = ["A Web Developer", "A Technical Support", "A Virtual Assistant"];
+            let titleIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const typingSpeed = 100;
+            const deletingSpeed = 50;
+            const delayBetweenTitles = 1500;
+            const jobTitleElement = document.getElementById('job-title');
+
+            function type() {
+                const currentTitle = titles[titleIndex];
+                if (isDeleting) {
+                    // Delete text
+                    jobTitleElement.textContent = currentTitle.substring(0, charIndex - 1) + "|";
+                    charIndex--;
+                } else {
+                    // Type text
+                    jobTitleElement.textContent = currentTitle.substring(0, charIndex + 1) + "|";
+                    charIndex++;
+                }
+
+                let speed = isDeleting ? deletingSpeed : typingSpeed;
+
+                if (!isDeleting && charIndex === currentTitle.length) {
+                    // Finished typing, start waiting and deleting
+                    speed = delayBetweenTitles;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    // Finished deleting, move to next title
+                    isDeleting = false;
+                    titleIndex = (titleIndex + 1) % titles.length;
+                    speed = 500; // Short pause before typing next title
+                }
+                
+                // Remove cursor for a brief moment to prevent CLS
+                jobTitleElement.textContent = jobTitleElement.textContent.replace('|', '');
+
+                setTimeout(type, speed);
+            }
+
+            // --- Scroll Reveal Effect ---
+            const hiddenElements = document.querySelectorAll('.hidden-content');
+
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.1 // element must be 10% visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // --- Initialize ---
+            window.onload = function() {
+                // 1. Start the typing animation
+                type();
+                
+                // 2. Attach observer to all elements
+                hiddenElements.forEach(el => observer.observe(el));
+            };
+            
+        </script>
+
+    </body>
+    </html>
